@@ -4,87 +4,84 @@ const Article = require('../models/article');
 const Category = require('../models/category');
 
 module.exports = {
-    getAllArticles: (req, res) => {
-        Article.find().then((articles) => {
+    getAllArticles: async (req, res) => {
+        try {
+            let articles = await Article.find()
             res.status(200).json({
                 articles
             })
-        }).catch(error => {
+        } catch (error) {
             res.status(500).json({
                 error
             })
-        })
+        }
     },
-    getArticle: ((req, res) => {
+    getArticle: async (req, res) => {
         const articleID = req.params.articleID
-        Article.findById(articleID).then((article) => {
+        try {
+            const article = await Article.findById(articleID)
             res.status(200).json({
                 article
             })
-        }).catch((error) => {
+        } catch (error) {
             res.status(500).json({
                 error
             })
-        })
-    }),
-    createArticle: (req, res) => {
+        }
+    },
+    createArticle: async (req, res) => {
         const { title, description, content, categoryID } = req.body;
 
-        Category.findById(categoryID).then((category) => {
-            if (!category) {
-                return res.status(404).json({
-                    message: "Not Found Category"
-                })
-            }
-
-            const article = new Article({
-                _id: new mongoose.Types.ObjectId(),
-                title,
-                description,
-                content,
-                categoryID
+        const category = await Category.findById(categoryID)
+        if (!category) {
+            res.status(404).json({
+                message: "Not Found Category"
             })
+            return
+        }
 
-            return article.save()
-                .then(() => {
-                    res.status(200).json({
-                        message: "Crated article"
-                    })
-                })
-                .catch((error) => {
-                    res.status(500).json({
-                        error
-                    })
-                })
+        const article = new Article({
+            _id: new mongoose.Types.ObjectId(),
+            title,
+            description,
+            content,
+            categoryID
         })
-
+        try {
+            await article.save()
+            res.status(200).json({
+                message: "Crated article"
+            })
+        } catch (error) {
+            res.status(500).json({
+                error
+            })
+        }
     },
-    updateArticle: (req, res) => {
+    updateArticle: async (req, res) => {
         const articleID = req.params.articleID
-        Article.updateOne({ _id: articleID }, req.body)
-            .then(() => {
-                res.status(200).json({
-                    message: "Article updated"
-                })
+        try {
+            await Article.updateOne({ _id: articleID }, req.body)
+            res.status(200).json({
+                message: "Article updated"
             })
-            .catch((error) => {
-                res.status(500).json({
-                    error
-                })
+        } catch (error) {
+            res.status(500).json({
+                error
             })
+        }
     },
-    deleteArticle: (req, res) => {
+    deleteArticle: async (req, res) => {
         const articleID = req.params.articleID
-        Article.remove({ _id: articleID })
-            .then(() => {
-                res.status(200).json({
-                    message: `Article id: ${articleID} deleted.`
-                })
+        try {
+            await Article.remove({ _id: articleID })
+            res.status(200).json({
+                message: `Article id: ${articleID} deleted.`
             })
-            .catch((error) => {
-                res.status(500).json({
-                    error
-                })
+        } catch (error) {
+            res.status(500).json({
+                error
             })
+        }
     }
 }
