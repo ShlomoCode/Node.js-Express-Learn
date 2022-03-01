@@ -60,6 +60,26 @@ module.exports = {
     },
     updateArticle: async (req, res) => {
         const articleID = req.params.articleID
+        const { categoryID } = req.body;
+
+        const article = await Article.findById(articleID)
+        if (!article){
+            if (!article) {
+                return res.status(404).json({
+                    message: "Not Found Article"
+                })
+            } 
+        }
+
+        if (categoryID) {
+            const category = await Category.findById(categoryID)
+
+            if (!category) {
+                return res.status(404).json({
+                    message: "Not Found Category"
+                })
+            }
+        }
         try {
             await Article.updateOne({ _id: articleID }, req.body)
             res.status(200).json({
