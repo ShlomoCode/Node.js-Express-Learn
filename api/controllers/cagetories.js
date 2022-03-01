@@ -16,6 +16,15 @@ module.exports = {
     },
     getCategory: async (req, res) => {
         const categoryID = req.params.categoryID
+
+        const category = await Category.findById(categoryID)
+
+        if (!category) {
+            return res.status(404).json({
+                message: "Category Not Found"
+            })
+        }
+
         try {
             const category = await Category.findById(categoryID)
 
@@ -48,6 +57,15 @@ module.exports = {
     },
     updateCategory: async (req, res) => {
         const categoryID = req.params.categoryID
+
+        const category = await Category.findById(categoryID)
+
+        if (!category) {
+            return res.status(404).json({
+                message: "Category Not Found"
+            })
+        }
+
         try {
             await Category.updateOne({ _id: categoryID }, req.body)
             res.status(200).json({
@@ -61,6 +79,15 @@ module.exports = {
     },
     deleteCategory: async (req, res) => {
         const categoryID = req.params.categoryID
+
+        const category = await Category.findById(categoryID)
+
+        if (!category) {
+            return res.status(404).json({
+                message: "Category Not Found"
+            })
+        }
+
         try {
             await Category.deleteOne({ _id: categoryID })
             res.status(200).json({

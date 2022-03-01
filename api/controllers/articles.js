@@ -63,12 +63,10 @@ module.exports = {
         const { categoryID } = req.body;
 
         const article = await Article.findById(articleID)
-        if (!article){
-            if (!article) {
-                return res.status(404).json({
-                    message: "Not Found Article"
-                })
-            } 
+        if (!article) {
+            return res.status(404).json({
+                message: "Not Found Article"
+            })
         }
 
         if (categoryID) {
@@ -93,6 +91,12 @@ module.exports = {
     },
     deleteArticle: async (req, res) => {
         const articleID = req.params.articleID
+        const article = await Article.findById(articleID)
+        if (!article) {
+            return res.status(404).json({
+                message: "Not Found Article"
+            })
+        }
         try {
             await Article.remove({ _id: articleID })
             res.status(200).json({
