@@ -2,10 +2,21 @@ const mongoose = require('mongoose');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const zxcvbn = require('zxcvbn')
 
 module.exports = {
     signup: (req, res) => {
         const { email, password } = req.body;
+
+        const weakness = zxcvbn(password)
+
+        if (weakness.score <= 2) {
+            return res.status(500).json({
+                message: "Weak password",
+                weakness: weakness.feedback
+            })
+        }
+
         bcrypt.hash(password, 10, async (error, hesh) => {
             if (error) {
                 return res.status(500).json({
