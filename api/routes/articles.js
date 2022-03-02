@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const checkAuth = require('../middelwares/checkAuth');
 
 const {
     getAllArticles,
@@ -11,8 +12,9 @@ const {
 
 router.get("/", getAllArticles);
 router.get("/:articleID", getArticle)
-router.post("/", createArticle);
-router.patch("/:articleID", updateArticle);
-router.delete("/:articleID", deleteArticle);
+
+router.post("/", checkAuth, createArticle);
+router.patch("/:articleID", checkAuth, updateArticle);
+router.delete("/:articleID", checkAuth, deleteArticle);
 
 module.exports = router;
